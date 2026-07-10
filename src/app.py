@@ -9,23 +9,23 @@ def create_app():
 
     # Object storage
     session: Session = Session()
-    _s3_context = None
 
     @app.before_serving
     async def startup():
-        _s3_context = session.client(
+        app.config['S3_CONTEXT'] = session.client(
             's3',
             endpoint_url='http://localhost:8333',
             aws_access_key_id='admin',
             aws_secret_access_key='admin123',
             region_name='us-east-1'
         )
-        app.config['S3_CLIENT'] = await _s3_context.__aenter__()
+        app.config['S3_CLIENT'] = await app.config['S3_CONTEXT'].__aenter__()
 
     @app.after_serving
     async def shutdown():
-        if _s3_context:
-            await _s3_context.__aexit__(None, None, None)
+        s3_context = app.config['S3_CONTEXT']
+        if s3_context:
+            await s3_context.__aexit__(None, None, None)
 
     # Blueprints
 
