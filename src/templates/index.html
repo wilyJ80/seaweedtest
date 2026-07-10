@@ -8,6 +8,18 @@
 	<body>
 
 		<h1>Storage</h1>
+
+		<h2>Add object</h2>
+
+		<h2>Objects</h2>
 	
+		<dl>
+		{% for obj in objs %}
+		<dt>Key: {{obj['Key']}}</dt>
+		<dd>Size (Bytes): {{obj['Size']}}</dd>
+		<dd>Last Modified: {{obj['LastModified']}}</dd>
+		{% endfor %}
+		</dl>
+
 	</body>
 </html>

@@ -6,7 +6,23 @@ home_bp = Blueprint("home", __name__)
 
 @home_bp.get('/')
 async def home():
-    return await render_template('index.html')
+    s3: S3Client = current_app.config['S3_CLIENT']
+
+    res = await s3.list_objects(
+        Bucket='test'
+    )
+
+    objs = [
+        {
+            "Key": obj['Key'],
+            "Size": obj['Size'],
+            "LastModified": obj['LastModified'].strftime("%Y-%m-%d")
+        }
+        for obj in res['Contents']
+    ]
+
+    print(objs)
+    return await render_template('index.html', objs=objs)
 
 @home_bp.route('/get-file')
 async def get_file():
