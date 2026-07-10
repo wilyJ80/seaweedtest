@@ -5,6 +5,7 @@ def create_app():
     app: Quart = Quart(__name__)
 
     app.url_map.strict_slashes = False
+    app.secret_key = 'changeme'
 
     # Object storage
     session: Session = Session()
