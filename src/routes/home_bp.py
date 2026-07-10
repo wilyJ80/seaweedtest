@@ -21,16 +21,15 @@ async def home():
         for obj in res['Contents']
     ]
 
-    print(objs)
     return await render_template('index.html', objs=objs)
 
-@home_bp.route('/get-file')
-async def get_file():
+@home_bp.route('/object/<key>')
+async def get_object_contents(key):
     s3: S3Client = current_app.config['S3_CLIENT']
 
     obj = await s3.get_object(
         Bucket='test',
-        Key='hello.txt'
+        Key=key
     )
     data = await obj['Body'].read()
     return data.decode('utf-8')

@@ -15,7 +15,12 @@
 	
 		<dl>
 		{% for obj in objs %}
-		<dt>Key: {{obj['Key']}}</dt>
+		<dt>
+				Key:
+				<a href={{ url_for('home.get_object_contents', key=obj['Key']) }}>
+				{{ obj['Key'] }}
+				</a>
+		</dt>
 		<dd>Size (Bytes): {{obj['Size']}}</dd>
 		<dd>Last Modified: {{obj['LastModified']}}</dd>
 		{% endfor %}
