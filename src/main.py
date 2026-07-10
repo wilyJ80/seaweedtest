@@ -12,8 +12,6 @@ async def main():
         region_name="us-east-1",
     ) as s3:
 
-        # await s3.create_bucket(Bucket="test")
-
         await s3.put_object(
             Bucket="test",
             Key="hello.txt",
