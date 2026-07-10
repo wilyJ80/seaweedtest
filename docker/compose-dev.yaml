@@ -1,0 +1,41 @@
+services:
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.39
+    container_name: seaweedfs
+    command:
+      - server
+      - -dir=/data
+      - -ip=seaweedfs
+      - -s3
+    ports:
+      - "8333:8333"   # S3
+      - "9333:9333"   # Master UI/API
+      - "8888:8888"   # Filer
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9333/cluster/status"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  seaweed-init:
+    image: chrislusf/seaweedfs:4.39
+    restart: "no"
+    depends_on:
+      seaweedfs:
+        condition: service_healthy
+    entrypoint:
+      - sh
+      - -ec
+      - |
+        echo "Uploading S3 configuration..."
+
+        weed shell -master=seaweedfs:9333 <<'EOF'
+        s3.configure -user=admin -access_key=admin -secret_key=admin123 -actions=Admin,Read,Write,List -apply
+        EOF
+
+        weed shell -master=seaweedfs:9333 <<'EOF'
+        s3.bucket.create -name test
+        EOF
+
+        echo "Done."
