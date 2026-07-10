@@ -1,4 +1,5 @@
 services:
+
   seaweedfs:
     image: chrislusf/seaweedfs:4.39
     container_name: seaweedfs
@@ -39,3 +40,16 @@ services:
         EOF
 
         echo "Done."
+
+  seaweed-admin:
+    image: chrislusf/seaweedfs:4.39
+    container_name: seaweed-admin
+    command:
+      - admin
+      - -masters=seaweedfs:9333
+      - -port=23646
+    ports:
+      - "23646:23646"
+    depends_on:
+      seaweedfs:
+        condition: service_healthy
